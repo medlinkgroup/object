@@ -8,7 +8,7 @@ void setup(){
   Wire.begin();
   Wire.beginTransmission(MPU);
   Wire.write(0x6B);
- //s Wire.write(0);
+  Wire.write(0);
   Wire.endTransmission(true);
   Serial.begin(9600);
 }
@@ -16,71 +16,71 @@ void setup(){
 void loop() {
   int valeur_brute = analogRead(A0);
 
-  float temperature_celcius = valeur_brute * (5.0 / 2023.0 * 100.0);
+  float temperature_celcius = valeur_brute * (3.3 / 1023.0 * 100.0);
   Serial.print("Temperature: ");
   Serial.println(temperature_celcius);
   
   Wire.beginTransmission(MPU);
   Wire.write(0);
   Wire.endTransmission(false);
-  Wire.requestFrom((int)MPU,14,true);
+  Wire.requestFrom((int) MPU,14,true);
   
-int AcXoff,AcYoff,AcZoff,GyXoff,GyYoff,GyZoff;
-int temp,toff;
-double t,tx,tf;
+  int AcXoff,AcYoff,AcZoff,GyXoff,GyYoff,GyZoff;
+  int temp,toff;
+  double t,tx,tf;
 
-//Acceleration data correction
-AcXoff = -950;
-AcYoff = -300;
-AcZoff = 0;
+  //Acceleration data correction
+  AcXoff = -950;
+  AcYoff = -300;
+  AcZoff = 0;
 
-//Temperature correction
-toff = -1600;
+  //Temperature correction
+  toff = -1600;
 
-//Gyro correction
-GyXoff = 480;
-GyYoff = 170;
-GyZoff = 210;
+  //Gyro correction
+  GyXoff = 480;
+  GyYoff = 170;
+  GyZoff = 210;
 
-//read accel data
-AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
-AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
-AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
+  //read accel data
+  AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
+  AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
+  AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
 
-//read temperature data
-temp=(Wire.read()<<8|Wire.read()) + toff;
-tx=temp;
-t = tx/340 + 36.53;
-tf = (t * 9/5) + 32;
+  //read temperature data
+  temp=(Wire.read()<<8|Wire.read()) + toff;
+  tx=temp;
+  t = tx/340 + 36.53;
+  tf = (t * 9/5) + 32;
 
-//read gyro data
-GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
-GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
-GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
+  //read gyro data
+  GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
+  GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
+  GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
 
-//get pitch/roll
-getAngle(AcX,AcY,AcZ);
+  //get pitch/roll
+  getAngle(AcX,AcY,AcZ);
 
-//send the data out the serial port
-Serial.print("Angle: ");
-Serial.print("Pitch = "); Serial.print(pitch);
-Serial.print(" | Roll = "); Serial.println(roll);
-
-Serial.print("Temp: ");
-Serial.print("Temp(F) = "); Serial.print(tf);
-Serial.print(" | Temp(C) = "); Serial.println(t);
-
-Serial.print("Accelerometer: ");
-Serial.print("X = "); Serial.print(AcX);
-Serial.print(" | Y = "); Serial.print(AcY);
-Serial.print(" | Z = "); Serial.println(AcZ);
-
-Serial.print("Gyroscope: ");
-Serial.print("X = "); Serial.print(GyX);
-Serial.print(" | Y = "); Serial.print(GyY);
-Serial.print(" | Z = "); Serial.println(GyZ);
-Serial.println(" ");
-delay(333);
+  //send the data out the serial port
+  Serial.print("Angle: ");
+  Serial.print("Pitch = "); Serial.print(pitch);
+  Serial.print(" | Roll = "); Serial.println(roll);
+  
+  Serial.print("Temp: ");
+  Serial.print("Temp(F) = "); Serial.print(tf);
+  Serial.print(" | Temp(C) = "); Serial.println(t);
+  
+  Serial.print("Accelerometer: ");
+  Serial.print("X = "); Serial.print(AcX);
+  Serial.print(" | Y = "); Serial.print(AcY);
+  Serial.print(" | Z = "); Serial.println(AcZ);
+  
+  Serial.print("Gyroscope: ");
+  Serial.print("X = "); Serial.print(GyX);
+  Serial.print(" | Y = "); Serial.print(GyY);
+  Serial.print(" | Z = "); Serial.println(GyZ);
+  Serial.println(" ");
+  delay(333);
 }
 
 //convert the accel data to pitch/roll
