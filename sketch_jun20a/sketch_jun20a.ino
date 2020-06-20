@@ -224,98 +224,93 @@ if ((WiFi.status() == WL_CONNECTED) && count == 15) { //Check WiFi connection st
  
     StaticJsonBuffer<500> JSONbufferTEMP;   //Declaring static JSON buffer
     JsonObject& JSONencoderTEMP = JSONbufferTEMP.createObject(); 
-     StaticJsonBuffer<1000> JSONbufferACC;   //Declaring static JSON buffer
-    JsonObject& JSONencoderACC = JSONbufferACC.createObject(); 
- 
+
     JSONencoderTEMP["deviceID"] = "1";
     JSONencoderTEMP["date"] = "2020-06-20T12:30:00.000Z";
-    
-    JSONencoderACC["deviceID"] = "1";
-    JSONencoderACC["date"] = "2020-06-20T12:30:00.000Z";
- 
+
     JsonArray& tempValues = JSONencoderTEMP.createNestedArray("tempValues"); //JSON array
-    tempValues.add(tempValueArray[5]); //Add value to array
+    tempValues.add(tempValueArray[0]); //Add value to array
+    tempValues.add(tempValueArray[1]); 
+    tempValues.add(tempValueArray[2]); 
+    tempValues.add(tempValueArray[3]); 
+    tempValues.add(tempValueArray[4]); 
+    tempValues.add(tempValueArray[5]); 
     tempValues.add(tempValueArray[6]); 
     tempValues.add(tempValueArray[7]); 
     tempValues.add(tempValueArray[8]); 
     tempValues.add(tempValueArray[9]); 
-    tempValues.add(tempValueArray[10]); 
-    tempValues.add(tempValueArray[11]); 
-    tempValues.add(tempValueArray[12]); 
-    tempValues.add(tempValueArray[13]); 
-    tempValues.add(tempValueArray[14]); 
+    
+    char JSONmessageBufferTEMP[500];
+    JSONencoderTEMP.prettyPrintTo(JSONmessageBufferTEMP, sizeof(JSONmessageBufferTEMP));
+    Serial.println(JSONmessageBufferTEMP);
+    HTTPClient httpTEMP; //Declare object of class HTTPClient
+    httpTEMP.begin("http://medlinkapi.herokuapp.com/temperatures");      //Specify request destination
+    httpTEMP.addHeader("Content-Type", "application/json");  //Specify content-type header    
+    int httpCodeTEMP = httpTEMP.POST(JSONmessageBufferTEMP);   //Send the request
+    String payloadTEMP = httpTEMP.getString();                 //Get the response payload
+    Serial.println("httpTEMPCode: ");   //Print HTTP return code
+    Serial.println(httpCodeTEMP);   //Print HTTP return code
+    Serial.println("payloadTEMP : ");    //Print request response payload
+    Serial.println(payloadTEMP);    //Print request response payload   
+    httpTEMP.end();  //Close connection 
+
+
+    StaticJsonBuffer<700> JSONbufferACC;   //Declaring static JSON buffer
+    JsonObject& JSONencoderACC = JSONbufferACC.createObject(); 
+ 
+    JSONencoderACC["deviceID"] = "1";
+    JSONencoderACC["date"] = "2020-06-20T12:30:00.000Z";
 
     JsonArray& accelerometerXValues = JSONencoderACC.createNestedArray("accelerometerXValues"); //JSON array
-    accelerometerXValues.add(accelerometerXArray[5]); //Add value to array
+    accelerometerXValues.add(accelerometerXArray[0]); //Add value to array
+    accelerometerXValues.add(accelerometerXArray[1]); 
+    accelerometerXValues.add(accelerometerXArray[2]); 
+    accelerometerXValues.add(accelerometerXArray[3]); 
+    accelerometerXValues.add(accelerometerXArray[4]); 
+    accelerometerXValues.add(accelerometerXArray[5]); 
     accelerometerXValues.add(accelerometerXArray[6]); 
     accelerometerXValues.add(accelerometerXArray[7]); 
     accelerometerXValues.add(accelerometerXArray[8]); 
     accelerometerXValues.add(accelerometerXArray[9]); 
-    accelerometerXValues.add(accelerometerXArray[10]); 
-    accelerometerXValues.add(accelerometerXArray[11]); 
-    accelerometerXValues.add(accelerometerXArray[12]); 
-    accelerometerXValues.add(accelerometerXArray[13]); 
-    accelerometerXValues.add(accelerometerXArray[14]); 
 
     JsonArray& accelerometerYValues = JSONencoderACC.createNestedArray("accelerometerYValues"); //JSON array
-    accelerometerYValues.add(accelerometerYArray[5]); //Add value to array
+    accelerometerYValues.add(accelerometerYArray[0]); //Add value to array
+    accelerometerYValues.add(accelerometerYArray[1]); 
+    accelerometerYValues.add(accelerometerYArray[2]); 
+    accelerometerYValues.add(accelerometerYArray[3]); 
+    accelerometerYValues.add(accelerometerYArray[4]); 
+    accelerometerYValues.add(accelerometerYArray[5]); 
     accelerometerYValues.add(accelerometerYArray[6]); 
     accelerometerYValues.add(accelerometerYArray[7]); 
     accelerometerYValues.add(accelerometerYArray[8]); 
     accelerometerYValues.add(accelerometerYArray[9]); 
-    accelerometerYValues.add(accelerometerYArray[10]); 
-    accelerometerYValues.add(accelerometerYArray[11]); 
-    accelerometerYValues.add(accelerometerYArray[12]); 
-    accelerometerYValues.add(accelerometerYArray[13]); 
-    accelerometerYValues.add(accelerometerYArray[14]); 
+
 
     JsonArray& accelerometerZValues = JSONencoderACC.createNestedArray("accelerometerZValues"); //JSON array
-    accelerometerZValues.add(accelerometerZArray[5]); //Add value to array
+    accelerometerZValues.add(accelerometerZArray[0]); //Add value to array
+    accelerometerZValues.add(accelerometerZArray[1]); 
+    accelerometerZValues.add(accelerometerZArray[2]); 
+    accelerometerZValues.add(accelerometerZArray[3]); 
+    accelerometerZValues.add(accelerometerZArray[4]); 
+    accelerometerZValues.add(accelerometerZArray[5]); 
     accelerometerZValues.add(accelerometerZArray[6]); 
     accelerometerZValues.add(accelerometerZArray[7]); 
     accelerometerZValues.add(accelerometerZArray[8]); 
     accelerometerZValues.add(accelerometerZArray[9]); 
-    accelerometerZValues.add(accelerometerZArray[10]); 
-    accelerometerZValues.add(accelerometerZArray[11]); 
-    accelerometerZValues.add(accelerometerZArray[12]); 
-    accelerometerZValues.add(accelerometerZArray[13]); 
-    accelerometerZValues.add(accelerometerZArray[14]); 
-    
 
-    char JSONmessageBufferTEMP[500];
-    char JSONmessageBufferACC[1000];
-    
-    JSONencoderTEMP.prettyPrintTo(JSONmessageBufferTEMP, sizeof(JSONmessageBufferTEMP));
-    Serial.println(JSONmessageBufferTEMP);
+    char JSONmessageBufferACC[700];
     JSONencoderACC.prettyPrintTo(JSONmessageBufferACC, sizeof(JSONmessageBufferACC));
     Serial.println(JSONmessageBufferACC);
- 
-    HTTPClient httpTEMP; //Declare object of class HTTPClient
     HTTPClient httpACC; //Declare object of class HTTPClient
-
-    httpTEMP.begin("http://medlinkapi.herokuapp.com/temperatures");      //Specify request destination
-    httpTEMP.addHeader("Content-Type", "application/json");  //Specify content-type header
-    
-    httpACC.begin("http://medlinkapi.herokuapp.com/accelerometers");      //Specify request destination
+    httpACC.begin("http://medlinkapi.herokuapp.com/accelerometres");      //Specify request destination
     httpACC.addHeader("Content-Type", "application/json");  //Specify content-type header
- 
-    int httpCodeTEMP = httpTEMP.POST(JSONmessageBufferTEMP);   //Send the request
-    String payloadTEMP = httpTEMP.getString();                 //Get the response payload
-     
-    int httpCodeACC = httpACC.POST(JSONmessageBufferTEMP);   //Send the request
+    int httpCodeACC = httpACC.POST(JSONmessageBufferACC);   //Send the request
     String payloadACC = httpACC.getString();                 //Get the response payload
-
-    Serial.println("httpTEMPCode: ");   //Print HTTP return code
-    Serial.println(httpCodeTEMP);   //Print HTTP return code
-    Serial.println("payloadTEMP : ");    //Print request response payload
-    Serial.println(payloadTEMP);    //Print request response payload
     Serial.println("httpCodeACC: ");   //Print HTTP return code
     Serial.println(httpCodeACC);   //Print HTTP return code
     Serial.println("payloadACC : ");    //Print request response payload
     Serial.println(payloadACC);    //Print request response payload
- 
-    httpTEMP.end();  //Close connection
-    httpACC.end();  //Close connection
+    httpACC.end();  //Close connection 
  
 } 
   count++;
