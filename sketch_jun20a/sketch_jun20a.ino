@@ -42,7 +42,8 @@ float sensorReadingsArr[3];
 
 /* Assign a unique ID to this sensor at the same time */
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(1);
-String DEVICE_ID = "1";
+
+String DEVICE_ID = "5ef65dca0169920017cca3b8";
  
 void displaySensorDetails(void)
 {
@@ -244,7 +245,7 @@ if ((WiFi.status() == WL_CONNECTED) && count == 15) { //Check WiFi connection st
 
   int colon = payloadTime.indexOf(':');                 // Set the first colon in time as reference point
 
-  String DATE = payloadTime.substring(colon - 13, colon - 3);
+  String DATE = payloadTime.substring(colon - 13, colon - 3) + "T00:00:00.000Z";
   
   for (byte i = 0; i < 10; i = i + 1) {
     Serial.println(tempValueArray[i]);
