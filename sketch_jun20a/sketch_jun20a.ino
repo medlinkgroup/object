@@ -5,16 +5,27 @@
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <stdio.h>
 
-//const char* ssid = "VM iPhone"; 
+
+const char* ssid = "VM"; 
 //const char* ssid = "iPhone"; 
-const char* ssid = "Fabiana Montiel"; 
+//const char* ssid = "Fabiana Montiel"; 
 //replace with your own wifi ssid 
-//const char* password = "mchagall";
+const char* password = "mchagall";
 //const char* password = "cici97ci";  
-const char* password = "fmfmfmfm";  
+//const char* password = "fmfmfmfm";  
 //replace with your own //wifi ssid password 
 const char* host = "https://medlinkapi.herokuapp.com/";
+const char* hostTime = "http://api.timezonedb.com/v2/get-time-zone?key=VYIBB3N5KKEM&format=xml&fields=formatted&by=zone&zone=Europe/Berlin";
+
+String payloadTime;               // Variables to accept data
+String nowday;
+String nowmonth;
+String nowyear;
+
+unsigned long prevMillis = millis();
+unsigned long interval = 60000;                 // Refresh in loop every 60 seconds
 
 int count = 0;
 
@@ -31,6 +42,7 @@ float sensorReadingsArr[3];
 
 /* Assign a unique ID to this sensor at the same time */
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(1);
+String DEVICE_ID = "1";
  
 void displaySensorDetails(void)
 {
@@ -185,8 +197,7 @@ float accelerometerZArray[10];
 
  
 void loop(void) 
-{
-  
+{ 
   int valeur_brute = analogRead(A0);
   float temperature_celcius = valeur_brute * (3.3 / 1023.0 * 100.0);
   Serial.print("Temperature: ");
@@ -212,6 +223,29 @@ if (count >= 5 && count <= 14) {
 
 if ((WiFi.status() == WL_CONNECTED) && count == 15) { //Check WiFi connection status
 
+ int httpCode = 0;                                        // Variable to hold received data
+  HTTPClient http;                                          // Declare an object of class HTTPClient
+ 
+  Serial.println("Connecting to TimezoneDB...");
+
+  http.begin(hostTime);                                        // Connect to site
+  httpCode = http.GET();                               // Check if data is coming in
+
+  while (httpCode == 0) {                             // if no data is in
+    delay(1000);                                           // wait a sec
+    http.begin(hostTime);                                     // and try again
+    httpCode = http.GET();
+  }
+
+  payloadTime = http.getString();                        // Save response as string
+  Serial.println(payloadTime);                              // Show response
+ 
+  http.end();    // Close connection to timezonedb
+
+  int colon = payloadTime.indexOf(':');                 // Set the first colon in time as reference point
+
+  String DATE = payloadTime.substring(colon - 13, colon - 3);
+  
   for (byte i = 0; i < 10; i = i + 1) {
     Serial.println(tempValueArray[i]);
   } 
@@ -225,8 +259,8 @@ if ((WiFi.status() == WL_CONNECTED) && count == 15) { //Check WiFi connection st
     StaticJsonBuffer<500> JSONbufferTEMP;   //Declaring static JSON buffer
     JsonObject& JSONencoderTEMP = JSONbufferTEMP.createObject(); 
 
-    JSONencoderTEMP["deviceID"] = "1";
-    JSONencoderTEMP["date"] = "2020-06-20T12:30:00.000Z";
+    JSONencoderTEMP["deviceID"] = DEVICE_ID;
+    JSONencoderTEMP["date"] = DATE;
 
     JsonArray& tempValues = JSONencoderTEMP.createNestedArray("tempValues"); //JSON array
     tempValues.add(tempValueArray[0]); //Add value to array
@@ -258,8 +292,8 @@ if ((WiFi.status() == WL_CONNECTED) && count == 15) { //Check WiFi connection st
     StaticJsonBuffer<700> JSONbufferACC;   //Declaring static JSON buffer
     JsonObject& JSONencoderACC = JSONbufferACC.createObject(); 
  
-    JSONencoderACC["deviceID"] = "1";
-    JSONencoderACC["date"] = "2020-06-20T12:30:00.000Z";
+    JSONencoderACC["deviceID"] = DEVICE_ID;
+    JSONencoderACC["date"] = DATE;
 
     JsonArray& accelerometerXValues = JSONencoderACC.createNestedArray("accelerometerXValues"); //JSON array
     accelerometerXValues.add(accelerometerXArray[0]); //Add value to array
